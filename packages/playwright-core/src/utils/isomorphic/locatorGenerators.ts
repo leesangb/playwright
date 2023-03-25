@@ -387,7 +387,7 @@ export class JavaLocatorFactory implements LocatorFactory {
     return this.quote(body);
   }
 
-  private quote(text: string) {
+  protected quote(text: string) {
     return escapeWithQuotes(text, '\"');
   }
 }
@@ -465,8 +465,21 @@ export class CSharpLocatorFactory implements LocatorFactory {
   }
 }
 
+export class CustomJavascriptLocatorFactory extends JavaLocatorFactory {
+  override generateLocator(base: LocatorBase, kind: LocatorType, body: string | RegExp, options: LocatorOptions = {}): string {
+    if (kind === 'test-id')
+      return `getByTestId(${this.tryReplaceToKey(body as string)})`;
+
+    return super.generateLocator(base, kind, body, options);
+  }
+
+  private tryReplaceToKey(testIdValue: string) {
+    return this.quote(testIdValue);
+  }
+}
+
 const generators: Record<Language, LocatorFactory> = {
-  javascript: new JavaScriptLocatorFactory(),
+  javascript: new CustomJavascriptLocatorFactory(),
   python: new PythonLocatorFactory(),
   java: new JavaLocatorFactory(),
   csharp: new CSharpLocatorFactory(),
