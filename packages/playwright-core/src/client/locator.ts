@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-import type * as structs from '../../types/structs';
-import type * as api from '../../types/types';
 import type * as channels from '@protocol/channels';
 import * as util from 'util';
+import type * as structs from '../../types/structs';
+import type * as api from '../../types/types';
 import { isString, monotonicTime } from '../utils';
+import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
+import {
+  getByAltTextSelector,
+  getByLabelSelector,
+  getByPlaceholderSelector,
+  getByRoleSelector,
+  getByTestIdSelector,
+  getByTextSelector,
+  getByTitleSelector,
+} from '../utils/isomorphic/locatorUtils';
+import { escapeForTextSelector } from '../utils/isomorphic/stringUtils';
 import { ElementHandle } from './elementHandle';
 import type { Frame } from './frame';
-import type { FilePayload, FrameExpectOptions, Rect, SelectOption, SelectOptionOptions, TimeoutOptions } from './types';
 import { parseResult, serializeArgument } from './jsHandle';
-import { escapeForTextSelector } from '../utils/isomorphic/stringUtils';
-import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
-import { getByAltTextSelector, getByLabelSelector, getByPlaceholderSelector, getByRoleSelector, getByTestIdSelector, getByTextSelector, getByTitleSelector } from '../utils/isomorphic/locatorUtils';
+import type { FilePayload, FrameExpectOptions, Rect, SelectOption, SelectOptionOptions, TimeoutOptions } from './types';
 
 export type LocatorOptions = {
   hasText?: string | RegExp;

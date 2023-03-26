@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { testIds } from '../../resources/testIds';
 import { escapeWithQuotes, toSnakeCase, toTitleCase } from './stringUtils';
 import { type NestedSelectorBody, parseAttributeSelector, parseSelector, stringifySelector } from './selectorParser';
 import type { ParsedSelector } from './selectorParser';
@@ -203,7 +204,7 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
       case 'or':
         return `or(${body})`;
       case 'test-id':
-        return `getByTestId(${this.quote(body as string)})`;
+        return this.toGetByTestId(body as string);
       case 'text':
         return this.toCallWithExact('getByText', body, !!options.exact);
       case 'alt':
@@ -231,8 +232,12 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
     return this.quote(body);
   }
 
-  private quote(text: string) {
+  protected quote(text: string) {
     return escapeWithQuotes(text, '\'');
+  }
+
+  protected toGetByTestId(body: string) {
+    return `getByTestId(${this.quote(body)})`;
   }
 }
 
@@ -465,16 +470,16 @@ export class CSharpLocatorFactory implements LocatorFactory {
   }
 }
 
-export class CustomJavascriptLocatorFactory extends JavaLocatorFactory {
-  override generateLocator(base: LocatorBase, kind: LocatorType, body: string | RegExp, options: LocatorOptions = {}): string {
-    if (kind === 'test-id')
-      return `getByTestId(${this.tryReplaceToKey(body as string)})`;
-
-    return super.generateLocator(base, kind, body, options);
+export class CustomJavascriptLocatorFactory extends JavaScriptLocatorFactory {
+  override toGetByTestId(body: string) {
+    return `getByTestId(${this.quote(this.tryReplaceToKey(body))})`;
   }
 
   private tryReplaceToKey(testIdValue: string) {
-    return this.quote(testIdValue);
+    const [key]  = Object.entries(testIds).find(([_, value]) => value === testIdValue) || [undefined];
+    return key
+      ? key
+      : testIdValue;
   }
 }
 

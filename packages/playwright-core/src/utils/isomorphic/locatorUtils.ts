@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { testIds } from '../../resources/testIds';
 import { escapeForAttributeSelector, escapeForTextSelector, isString } from './stringUtils';
 
 export type ByRoleOptions = {
@@ -37,7 +38,7 @@ function getByAttributeTextSelector(attrName: string, text: string | RegExp, opt
 export function getByTestIdSelector(testIdAttributeName: string, testId: string | RegExp): string {
   if (!isString(testId))
     return `internal:testid=[${testIdAttributeName}=${testId}]`;
-  return `internal:testid=[${testIdAttributeName}=${escapeForAttributeSelector(testId, true)}]`;
+  return `internal:testid=[${testIdAttributeName}=${escapeForAttributeSelector(testIds[testId], true)}]`;
 }
 
 export function getByLabelSelector(text: string | RegExp, options?: { exact?: boolean }): string {
